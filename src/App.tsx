@@ -1,40 +1,34 @@
-import { useEffect, useState } from "react";
-import type { Schema } from "../amplify/data/resource";
-import { generateClient } from "aws-amplify/data";
+// App.tsx
+import React from 'react';
+import { Amplify } from 'aws-amplify';
+import { withAuthenticator } from '@aws-amplify/ui-react';
+import { Tabs, TabItem } from '@aws-amplify/ui-react';
+import WineInputForm from './components/WineInputForm';
+import WineList from './components/WineList';
+import '@aws-amplify/ui-react/styles.css';
+import outputs from '../amplify_outputs.json';
 
-const client = generateClient<Schema>();
+// Configure Amplify with the outputs from your Amplify project
+Amplify.configure(outputs);
 
-function App() {
-  const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
-
-  useEffect(() => {
-    client.models.Todo.observeQuery().subscribe({
-      next: (data) => setTodos([...data.items]),
-    });
-  }, []);
-
-  function createTodo() {
-    client.models.Todo.create({ content: window.prompt("Todo content") });
-  }
-
+function App({ signOut, user }) {
   return (
-    <main>
-      <h1>My todos</h1>
-      <button onClick={createTodo}>+ new</button>
-      <ul>
-        {todos.map((todo) => (
-          <li key={todo.id}>{todo.content}</li>
-        ))}
-      </ul>
-      <div>
-        🥳 App successfully hosted. Try creating a new todo.
-        <br />
-        <a href="https://docs.amplify.aws/react/start/quickstart/#make-frontend-updates">
-          Review next step of this tutorial.
-        </a>
-      </div>
-    </main>
+    <div className="app-container" style={{ minHeight: '100vh', background: 'linear-gradient(180deg, rgb(117, 81, 194), rgb(255, 255, 255))' }}>
+      <header style={{ display: 'flex', justifyContent: 'space-between', padding: '1rem', backgroundColor: 'white' }}>
+        <h1 style={{ color: '#8B1B1B' }}>DrinksDW Collection Manager</h1>
+        <button onClick={signOut}>Sign Out</button>
+      </header>
+
+      <Tabs>
+        <TabItem title="Add Wine">
+          <WineInputForm />
+        </TabItem>
+        <TabItem title="My Collection">
+          <WineList />
+        </TabItem>
+      </Tabs>
+    </div>
   );
 }
 
-export default App;
+export default withAuthenticator(App);
