@@ -1,34 +1,21 @@
 // App.tsx
 import React from 'react';
 import { Amplify } from 'aws-amplify';
-import { withAuthenticator } from '@aws-amplify/ui-react';
-import { Tabs, TabItem } from '@aws-amplify/ui-react';
-import WineInputForm from './components/WineInputForm';
-import WineList from './components/WineList';
-import '@aws-amplify/ui-react/styles.css';
-import outputs from '../amplify_outputs.json';
+import { SpiritTabs } from './components/SpiritTabs';
+import awsconfig from './aws-exports';
 
-// Configure Amplify with the outputs from your Amplify project
-Amplify.configure(outputs);
+// Configure Amplify with the AWS configuration
+Amplify.configure(awsconfig);
 
-function App({ signOut, user }) {
+function App() {
   return (
-    <div className="app-container" style={{ minHeight: '100vh', background: 'linear-gradient(180deg, rgb(117, 81, 194), rgb(255, 255, 255))' }}>
-      <header style={{ display: 'flex', justifyContent: 'space-between', padding: '1rem', backgroundColor: 'white' }}>
-        <h1 style={{ color: '#8B1B1B' }}>DrinksDW Collection Manager</h1>
-        <button onClick={signOut}>Sign Out</button>
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(180deg, rgb(117, 81, 194), rgb(255, 255, 255))' }}>
+      <header style={{ display: 'flex', justifyContent: 'center', padding: '1rem', backgroundColor: 'white' }}>
+        <h1 style={{ color: '#8B1B1B' }}>Spirit Collection Manager</h1>
       </header>
-
-      <Tabs>
-        <TabItem title="Add Wine">
-          <WineInputForm />
-        </TabItem>
-        <TabItem title="My Collection">
-          <WineList />
-        </TabItem>
-      </Tabs>
+      <SpiritTabs />
     </div>
   );
 }
 
-export default withAuthenticator(App);
+export default App;

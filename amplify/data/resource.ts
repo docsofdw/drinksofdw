@@ -1,28 +1,42 @@
-import { defineData, defineModel, defineField } from '@aws-amplify/backend';
+import { AmplifyGraphqlApi, constructGraphqlModel } from '@aws-amplify/backend';
 
-// Define the Spirit model
-const schema = {
-  Spirit: defineModel({
-    fields: {
-      name: defineField('string', { required: true }),
-      producer: defineField('string', { required: true }),
-      type: defineField('string', { required: true }),
-      country: defineField('string', { required: true }),
-      region: defineField('string'),
-      abv: defineField('number'), // Alcohol by volume
-      age: defineField('number'),
-      quantity: defineField('number', { required: true })
+// Define the Spirit model using constructGraphqlModel
+const spiritSchema = constructGraphqlModel({
+  name: 'Spirit',
+  fields: {
+    name: { type: 'String', isRequired: true },
+    producer: { type: 'String', isRequired: true },
+    type: { type: 'String', isRequired: true },
+    country: { type: 'String', isRequired: true },
+    region: { type: 'String' },
+    abv: { type: 'Float' }, // Alcohol by volume
+    age: { type: 'Int' },
+    quantity: { type: 'Int', isRequired: true }
+  }
+});
+
+// Define the GraphQL API with the Spirit model
+export const data = new AmplifyGraphqlApi({
+  name: 'SpiritApi',
+  schema: `
+    type Spirit @model {
+      id: ID!
+      name: String!
+      producer: String!
+      type: String!
+      country: String!
+      region: String
+      abv: Float
+      age: Int
+      quantity: Int!
     }
-  })
-};
-
-// Define the data configuration with authorization
-export const data = defineData({
-  schema,
-  authorizationModes: {
-    defaultAuthorizationMode: 'userPool'
+  `,
+  authorizationConfig: {
+    defaultAuthorization: {
+      authorizationType: 'AMAZON_COGNITO_USER_POOLS'
+    }
   }
 });
 
 // Export the schema type
-export type Schema = typeof schema;
+export type Schema = typeof spiritSchema;
